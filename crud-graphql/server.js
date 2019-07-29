@@ -2,7 +2,7 @@ const express = require("express");
 const { graphql, buildSchema } = require("graphql");
 const graphqlHTTP = require("express-graphql");
 
-const courses = require("./courses");
+let courses = require("./courses");
 
 // schema definition language
 const schema = buildSchema(`
@@ -10,6 +10,10 @@ const schema = buildSchema(`
     id: ID!
     title: String!
     views: Int
+  }
+
+  type Alert {
+      message: String
   }
 
   input CourseInput {
@@ -24,7 +28,8 @@ const schema = buildSchema(`
 
   type Mutation {
     addCourse(input: CourseInput): Course
-    updateCourse(id: ID!, input: CourseInput): Course
+    updateCourse(id: ID!, input: CourseInput): Course,
+    deleteCourse(id: ID!): Alert
   }
 `);
 
@@ -46,6 +51,12 @@ const root = {
 
     const newCourse = Object.assign(course, input);
     return newCourse;
+  },
+  deleteCourse({id}) {
+    courses = courses.filter(course => course.id !== id);
+    return  {
+        message: `Course with id: ${id} was deleted`
+    }
   }
 };
 
