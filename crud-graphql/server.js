@@ -17,11 +17,24 @@ const schema = buildSchema(`
     getCourse(id: ID!): Course
   }
 
+  type Mutation {
+    addCourse(title: String!, views: Int): Course
+  }
 `);
 
 const root = {
   getCourses: () => courses,
-  getCourse: ({ id }) => courses.find( course => course.id === id)
+  getCourse: ({ id }) => courses.find(course => course.id === id),
+  addCourse({ title, views }) {
+    const id = String(courses.length + 1);
+    const course = {
+      id,
+      title,
+      views
+    };
+    courses.push(course);
+    return course;
+  }
 };
 
 const app = express();
@@ -36,9 +49,9 @@ app.use(
   })
 );
 
-app.get('/', (req, res) => {
-    res.send(courses);
-})
+app.get("/", (req, res) => {
+  res.send(courses);
+});
 
 app.listen(8080, function() {
   console.log("server started");
