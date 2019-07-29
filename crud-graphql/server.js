@@ -14,14 +14,14 @@ const schema = buildSchema(`
 
   type Query {
     getCourses: [Course]
+    getCourse(id: ID!): Course
   }
 
 `);
 
 const root = {
-  getCourses: function() {
-    return courses;
-  }
+  getCourses: () => courses,
+  getCourse: ({ id }) => courses.find( course => course.id === id)
 };
 
 const app = express();
