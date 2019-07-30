@@ -5,7 +5,7 @@ module.exports = {
     async getCourses(obj, { page, limit }) {
       let courses = Course.find();
       if (page !== undefined) {
-          courses = courses.limit(limit).skip((page -1) * limit)
+        courses = courses.limit(limit).skip((page - 1) * limit);
       }
       return await courses;
     },
@@ -15,8 +15,8 @@ module.exports = {
     }
   },
   Mutation: {
-    async addCourse(obj, { input }) {
-      const course = new Course(input);
+    async addCourse(obj, { input, user }) {
+      const course = new Course({ ...input, user });
       await course.save();
       return course;
     },

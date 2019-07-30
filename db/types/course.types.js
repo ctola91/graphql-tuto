@@ -16,7 +16,7 @@ type Course {
   }
 
   extend type Mutation {
-    addCourse(input: CourseInput): Course
+    addCourse(input: CourseInput, user: ID): Course
     updateCourse(id: ID!, input: CourseInput): Course,
     deleteCourse(id: ID!): Alert
   }
