@@ -22,7 +22,7 @@ const schema = buildSchema(`
   }
 
   type Query {
-    getCourses: [Course]
+    getCourses(page: Int, limit: Int = 1): [Course]
     getCourse(id: ID!): Course
   }
 
@@ -34,7 +34,12 @@ const schema = buildSchema(`
 `);
 
 const root = {
-  getCourses: () => courses,
+  getCourses: ({ page, limit }) => {
+    if (page !== undefined) {
+      return courses.slice(page * limit, (page + 1) * limit);
+    }
+    return courses;
+  },
   getCourse: ({ id }) => courses.find(course => course.id === id),
   addCourse({ input }) {
     const id = String(courses.length + 1);
@@ -52,11 +57,11 @@ const root = {
     const newCourse = Object.assign(course, input);
     return newCourse;
   },
-  deleteCourse({id}) {
+  deleteCourse({ id }) {
     courses = courses.filter(course => course.id !== id);
-    return  {
-        message: `Course with id: ${id} was deleted`
-    }
+    return {
+      message: `Course with id: ${id} was deleted`
+    };
   }
 };
 
@@ -76,6 +81,6 @@ app.get("/", (req, res) => {
   res.send(courses);
 });
 
-app.listen(8080, function() {
+app.listen(4000, function() {
   console.log("server started");
 });
